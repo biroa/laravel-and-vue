@@ -3,7 +3,7 @@ Vue.http.headers.common['X-CSRF-TOKEN'] = $("#token").attr("value");
 new Vue({
 
     el: '#manage-vue',
-
+    // The initialized object
     data: {
         items: [],
         pagination: {
@@ -21,9 +21,11 @@ new Vue({
     },
 
     computed: {
+        // Check the current activated page
         isActived: function () {
             return this.pagination.current_page;
         },
+        // The page number logic which we calculate
         pagesNumber: function () {
             if (!this.pagination.to) {
                 return [];
@@ -56,18 +58,20 @@ new Vue({
         getVueItems: function(page){
             this.$http.get('/vueitems?page='+page).then((response) => {
                 this.$set('items', response.data.data.data);
-            this.$set('pagination', response.data.pagination);
-        });
+                this.$set('pagination', response.data.pagination);
+            });
         },
-
+        // When user clicks on the submit button on the create item modal
+        // We post data to the backend and handle error if it happens
         createItem: function(){
             var input = this.newItem;
             this.$http.post('/vueitems',input).then((response) => {
                 this.changePage(this.pagination.current_page);
-            this.newItem = {'title':'','description':''};
-            $("#create-item").modal('hide');
-            toastr.success('Item Created Successfully.', 'Success Alert', {timeOut: 5000});
-        }, (response) => {
+                this.newItem = {'title':'','description':''};
+                $("#create-item").modal('hide');
+                toastr.success('Item Created Successfully.', 'Success Alert', {timeOut: 5000});
+            }, (response) => {
+                // Validating data
                 this.formErrors = response.data;
             });
         },
@@ -76,8 +80,8 @@ new Vue({
         deleteItem: function(item){
             this.$http.delete('/vueitems/'+item.id).then((response) => {
                 this.changePage(this.pagination.current_page);
-            toastr.success('Item Deleted Successfully.', 'Success Alert', {timeOut: 5000});
-        });
+                toastr.success('Item Deleted Successfully.', 'Success Alert', {timeOut: 5000});
+            });
         },
         // When the user clicks on the edit button we insert the selected
         // rows data into the object of the modal window and show the modal
@@ -94,14 +98,15 @@ new Vue({
             var input = this.fillItem;
             this.$http.put('/vueitems/'+id,input).then((response) => {
                 this.changePage(this.pagination.current_page);
-            this.fillItem = {'title':'','description':'','id':''};
-            $("#edit-item").modal('hide');
-            toastr.success('Item Updated Successfully.', 'Success Alert', {timeOut: 5000});
-        }, (response) => {
+                this.fillItem = {'title':'','description':'','id':''};
+                $("#edit-item").modal('hide');
+                toastr.success('Item Updated Successfully.', 'Success Alert', {timeOut: 5000});
+            },(response) => {
+                // Validating data
                 this.formErrorsUpdate = response.data;
             });
         },
-
+        // When user clicks backward, forward or the next page link
         changePage: function (page) {
             this.pagination.current_page = page;
             this.getVueItems(page);

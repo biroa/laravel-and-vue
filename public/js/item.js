@@ -51,6 +51,8 @@ new Vue({
 
     methods : {
 
+        //Get the default pagination settings from the backend with the stored data
+        //using setters to populate the object
         getVueItems: function(page){
             this.$http.get('/vueitems?page='+page).then((response) => {
                 this.$set('items', response.data.data.data);
@@ -70,13 +72,15 @@ new Vue({
             });
         },
 
+        //Send an ajax post only with the item ID to the backend for delete
         deleteItem: function(item){
             this.$http.delete('/vueitems/'+item.id).then((response) => {
                 this.changePage(this.pagination.current_page);
             toastr.success('Item Deleted Successfully.', 'Success Alert', {timeOut: 5000});
         });
         },
-
+        // When the user clicks on the edit button we insert the selected
+        // rows data into the object of the modal window and show the modal
         editItem: function(item){
             this.fillItem.title = item.title;
             this.fillItem.id = item.id;
@@ -84,6 +88,8 @@ new Vue({
             $("#edit-item").modal('show');
         },
 
+        //When the user submitting the Edit Modal with the data
+        //we put the data on the back-end
         updateItem: function(id){
             var input = this.fillItem;
             this.$http.put('/vueitems/'+id,input).then((response) => {

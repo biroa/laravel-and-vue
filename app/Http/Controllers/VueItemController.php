@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Item;
 
 /**
@@ -15,8 +14,8 @@ class VueItemController extends Controller
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function manageView(){
-        return view('manage-view');
+    public function manageVue(){
+        return view('manage-vue');
     }
 
     /**
@@ -42,15 +41,42 @@ class VueItemController extends Controller
 
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(Request $request){
+        $this->validate($request,[
+            'title' => 'required',
+            'description' => 'required',
+        ]);
 
+        $create = Item::create($request->all());
+        return response()->json($create);
     }
 
+    /**
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function update(Request $request, $id){
+        $this->validate($request,[
+            'title'       =>    'required',
+            'description' =>    'required'
+        ]);
 
+        $edit = Item::find($id)->update($request->all());
+
+        return response()->json($edit);
     }
 
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function destroy($id){
-
+        Item::find($id)->delete();
+        return response()->json(['done']);
     }
 }
